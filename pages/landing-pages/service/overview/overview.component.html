@@ -1,0 +1,334 @@
+<ng-container *ngIf="form">
+
+  <div class="uk-section uk-section-primary uk-preserve-color uk-margin-xlarge-bottom uk-padding-remove" uk-height-viewport="offset-bottom: 30">
+    <div class="uk-grid uk-grid-match uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-2@l">
+
+      <div class="uk-flex-last@m uk-flex-last@l uk-text-right">
+        <img src="{{getExtrasField('longImage').value}}">
+      </div>
+
+      <div class="uk-first-column">
+        <div class="uk-padding-large uk-margin-large-left@m uk-margin-large-left@l uk-margin-large-top">
+          <p *ngIf="getServiceField('name').value !== ''" class="big-text uk-text-primary">Why {{getServiceField('name').value}}</p>
+          <h1 *ngIf="getServiceField('tagline').value !== ''">{{getServiceField('tagline').value}} </h1>
+          <p *ngIf="getExtrasField('pitch').value !== ''" class="regular-text uk-margin-medium-top">{{getExtrasField('pitch').value}}</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</ng-container>
+
+<!--INSIGHT INFO-->
+<div *ngIf="form" class="uk-section uk-section-default">
+  <div class="uk-container uk-container-large">
+
+    <div class="uk-card uk-card-default uk-position-relative">
+
+      <div class="uk-position-absolute" style="top: -40px; right: -40px">
+        <img src="../../../../../assets/images/icons/circle.png" width="110px">
+      </div>
+
+      <div class="uk-card-body uk-padding-large">
+
+        <h5 class="uk-text-uppercase">Insight Info</h5>
+
+        <div class="uk-margin-medium-top">
+          <dt>Description</dt>
+          <dd class="uk-margin-small-top uk-visible@m">
+              <read-more-text [text]="getServiceField('description').value" [maxHeight]="69">
+              </read-more-text>
+          </dd>
+          <dd class="uk-margin-small-top uk-hidden@m">
+            <read-more-text [text]="getServiceField('description').value" [maxHeight]="134">
+            </read-more-text>
+          </dd>
+        </div>
+
+        <hr class="uk-margin-medium-top">
+
+        <div class="uk-grid uk-child-width-1-1@s uk-child-width-1-4@m uk-child-width-1-4@l uk-margin-large-bottom" uk-grid="masonry: true">
+
+          <div *ngIf="getServiceArray('targetUsers').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Users</dt>
+            <dd class="uk-margin-small-top">
+              <span class="" *ngFor="let targetUser of getServiceArray('targetUsers').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{ getVocabularyName('targetUsers',targetUser) }}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceField('resourceOrganisation')?.value !== ''" class="uk-margin-medium-top">
+            <dt>Resource Organization</dt>
+            <dd class="uk-margin-small-top">{{getVocabularyName('resourceOrganisation', getServiceField('resourceOrganisation').value)}}</dd>
+          </div>
+
+          <div *ngIf="getServiceArray('accessModes').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Access Mode</dt>
+            <dd class="uk-margin-small-top">
+              <span *ngFor="let accessMode of getServiceArray('accessModes').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{getVocabularyName('accessModes', accessMode)}}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceArray('fundingBody')?.controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Funding Body</dt>
+            <dd class="uk-margin-small-top">
+              <span *ngFor="let funder of getServiceArray('fundingBody').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{getVocabularyName('fundingBody', funder)}}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceArray('resourceProviders').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Resource Providers</dt>
+            <dd class="uk-margin-small-top">
+              <span class="" *ngFor="let provider of getServiceArray('resourceProviders').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{getVocabularyName('resourceProviders', provider)}}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceArray('accessTypes').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Access Type</dt>
+            <dd class="uk-margin-small-top">
+              <span *ngFor="let accessType of getServiceArray('accessTypes').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{getVocabularyName('accessTypes', accessType)}}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceField('trl').value !== ''" class="uk-margin-medium-top">
+            <dt>TRL</dt>
+            <dd class="uk-margin-small-top">{{getVocabularyName('trl', getServiceField('trl').value)}}</dd>
+          </div>
+
+          <div *ngIf="getServiceArray('fundingPrograms').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Funding Program</dt>
+            <dd class="uk-margin-small-top">
+              <span *ngFor="let funder of getServiceArray('fundingPrograms').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{getVocabularyName('fundingPrograms', funder)}}</span>
+            </dd>
+          </div>
+
+          <div *ngIf="getServiceArray('grantProjectNames').controls[0].value !== ''" class="uk-margin-medium-top">
+            <dt>Grant/Project Name</dt>
+            <dd class="uk-margin-small-top">
+              <span *ngFor="let grant of getServiceArray('grantProjectNames').value; let i = index">
+                <span *ngIf="i > 0">, </span>{{grant}}</span>
+            </dd>
+          </div>
+
+        </div>
+
+        <div *ngIf="getServiceField('termsOfUse')?.value !== ''" class="uk-margin-top">
+          <a href="{{getServiceField('termsOfUse').value}}" target="_blank" class="uk-button uk-button-text uk-margin-top">Terms of use</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--BENEFITS-->
+<div *ngIf="form && getExtrasArray('benefits')?.controls[0]?.get('benefitsTitle').value !== ''" class="uk-section uk-section-default uk-margin-xlarge-bottom uk-visible@m">
+  <div class="uk-container uk-container-large">
+
+    <h1>Benefits</h1>
+
+    <div id="BenefitSlideShow" class="uk-position-relative uk-margin-medium-top" uk-slideshow="ratio: 12:4; animation: fade; autoplay: true; autoplay-interval: 4000; pause-on-hover: true;" (beforeitemshow)="dragSlide('BenefitSlideShow')">
+
+      <ul class="uk-slideshow-items">
+        <li *ngFor="let benefit of getExtrasArray('benefits').value" class="uk-grid uk-child-width-1-2 ">
+
+          <div class="uk-flex uk-flex-middle">
+            <div>
+              <h4 class="uk-text-primary">{{benefit.benefitsTitle}}</h4>
+              <p class="slider-description uk-margin-top big-text-header">{{benefit.benefitsText}}</p>
+            </div>
+          </div>
+          <div class="uk-flex uk-flex-center">
+            <img src="{{benefit.benefitsImage !== '' ? benefit.benefitsImage : '../../../../../assets/images/mocks/image_2021_09_30T11_53_15_253Z.png'}}" width="400">
+          </div>
+
+        </li>
+      </ul>
+
+      <div class="uk-position-bottom-center uk-position-small uk-margin-medium-top" style="bottom: -60px">
+        <ul class="uk-dotnav">
+          <li *ngFor="let benefit of getExtrasArray('benefits').value; let i=index" [ngClass]="{'uk-active': benefitSlide === i}">
+            <a (click)="showSlide('BenefitSlideShow', i)">Item {{i}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--BENEFITS MOBILE-->
+<div *ngIf="form && getExtrasArray('benefits')?.controls[0]?.get('benefitsTitle').value !== ''" class="uk-section uk-section-default uk-margin-xlarge-bottom uk-hidden@m">
+  <div class="uk-container uk-container-large">
+
+    <h1>Benefits</h1>
+
+    <div id="BenefitSlideShowMobile" class="uk-position-relative uk-margin-medium-top" uk-slideshow="ratio: 12:4; min-height: 750; animation: fade; autoplay: true; autoplay-interval: 4000; pause-on-hover: true;" (beforeitemshow)="dragSlideMobile('BenefitSlideShowMobile')">
+
+      <ul class="uk-slideshow-items">
+        <li *ngFor="let benefit of getExtrasArray('benefits').value" class="uk-grid uk-child-width-1-1">
+
+          <div class="uk-flex uk-flex-center">
+            <img src="{{benefit.benefitsImage !== '' ? benefit.benefitsImage : '../../../../../assets/images/mocks/image_2021_09_30T11_53_15_253Z.png'}}" width="400">
+          </div>
+          <div class="uk-flex uk-flex-middle">
+            <div>
+              <h4 class="uk-text-primary">{{benefit.benefitsTitle}}</h4>
+              <p class="slider-description uk-margin-top big-text-header">{{benefit.benefitsText}}</p>
+            </div>
+          </div>
+
+
+        </li>
+      </ul>
+
+      <div class="uk-position-bottom-center uk-position-small uk-margin-medium-top" style="bottom: -60px">
+        <ul class="uk-dotnav">
+          <li *ngFor="let benefit of getExtrasArray('benefits').value; let i=index" [ngClass]="{'uk-active': benefitSlideMobile === i}">
+            <a (click)="showSlideMobile('BenefitSlideShowMobile', i)">Item {{i}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--FEATURES-->
+<div *ngIf="form && getExtrasArray('features')?.controls[0]?.get('featuresTitle').value !== ''" class="uk-section uk-section-default uk-margin-xlarge-top uk-margin-xlarge-bottom">
+  <div class="uk-container uk-container-large">
+
+    <h1>Features</h1>
+
+    <div class="uk-grid uk-grid-match uk-child-width-1-1@s uk-child-width-1-3@m uk-child-width-1-3@l uk-margin-large-top uk-flex-center">
+
+      <div *ngFor="let feature of getExtrasArray('features').value" class="uk-grid-margin">
+        <div class="uk-card uk-card-default">
+          <div class="uk-card-body uk-text-center">
+
+            <img src="{{feature.featuresImage !== '' ? feature.featuresImage : '../../../../../assets/images/mocks/image_2021_09_30T11_52_55_688Z.png'}}" width="80">
+            <h6 class="uk-margin-top">{{feature.featuresTitle}}</h6>
+            <p class="regular-text uk-margin-medium-top">{{feature.featuresText}}</p>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!--USE CASES-->
+<div *ngIf="form && getExtrasArray('useCasesExtras')?.controls[0]?.get('useCaseTitle').value !== ''" class="uk-section-default uk-margin-xlarge-top uk-margin-xlarge-bottom uk-visible@m">
+
+  <div class="uk-container uk-container-large">
+
+    <h1>Use Cases</h1>
+
+    <div id="slideShow" class="uk-position-relative" uk-slideshow="ratio: 12:4; autoplay: true; autoplay-interval: 4000; pause-on-hover: true;" (beforeitemshow)="dragSlide('slideShow')">
+
+      <ul class="uk-slideshow-items">
+        <li *ngFor="let useCase of getExtrasArray('useCasesExtras').value" class="uk-flex-middle">
+          <div class="uk-width-1-1 uk-grid uk-child-width-1-2">
+
+            <div class="slider-image uk-flex uk-flex-right">
+              <div class="uk-card uk-card-default">
+                <img src="{{useCase.useCaseImage !== '' ? useCase.useCaseImage : '../../../../../assets/images/mocks/image_2021_09_30T11_53_37_207Z.png'}}" width="294">
+              </div>
+            </div>
+
+            <div class="slider-text uk-flex uk-flex-middle">
+              <div class="slider-bold-background-header">{{useCase.useCaseTitle}}</div>
+
+              <div class="">
+                <div class="slider-header">{{useCase.useCaseTitle}}</div>
+                <div class="slider-description uk-margin-top">{{useCase.useCaseText}}</div>
+                <div *ngIf="useCase.useCaseLink !== ''" class="uk-margin-medium-top">
+                  <a href="{{useCase.useCaseLink}}" target="_blank" class="uk-button uk-button-text">Learn more</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </li>
+      </ul>
+
+      <div class="uk-position-bottom-center uk-position-small">
+        <ul class="uk-dotnav">
+          <li *ngFor="let useCase of getExtrasArray('useCasesExtras').value; let i=index" [ngClass]="{'uk-active': slide === i}">
+            <a (click)="showSlide('slideShow', i)">Item {{i}}</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--USE CASES MOBILE-->
+<div *ngIf="form && getExtrasArray('useCasesExtras')?.controls[0]?.get('useCaseTitle').value !== ''" class="uk-section-default uk-margin-xlarge-top uk-margin-xlarge-bottom uk-hidden@m">
+
+  <div class="uk-container uk-container-large">
+
+    <h1 class="uk-margin-medium-bottom">Use Cases</h1>
+
+    <div id="slideShowMobile" class="uk-position-relative" uk-slideshow="ratio: 12:4; min-height: 750; autoplay: true; autoplay-interval: 4000; pause-on-hover: true;" (beforeitemshow)="dragSlideMobile('slideShowMobile')">
+
+      <ul class="uk-slideshow-items">
+        <li *ngFor="let useCase of getExtrasArray('useCasesExtras').value" class="">
+          <div class="">
+
+            <div class="slider-image uk-flex uk-flex-center">
+              <div class="uk-card uk-card-default">
+                <img src="{{useCase.useCaseImage !== '' ? useCase.useCaseImage : '../../../../../assets/images/mocks/image_2021_09_30T11_53_37_207Z.png'}}" width="294">
+              </div>
+            </div>
+
+            <div class="slider-text uk-text-center uk-margin-medium-top">
+              <div class="slider-bold-background-header uk-visible@m">{{useCase.useCaseTitle}}</div>
+
+              <div class="">
+                <div class="slider-header">{{useCase.useCaseTitle}}</div>
+                <div class="slider-description uk-margin-top">{{useCase.useCaseText}}</div>
+                <div *ngIf="useCase.useCaseLink !== ''" class="uk-margin-medium-top">
+                  <a href="{{useCase.useCaseLink}}" target="_blank" class="uk-button uk-button-text">Learn more</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </li>
+      </ul>
+
+      <div class="uk-position-bottom-center uk-position-small">
+        <ul class="uk-dotnav">
+          <li *ngFor="let useCase of getExtrasArray('useCasesExtras').value; let i=index" [ngClass]="{'uk-active': slideMobile === i}">
+            <a (click)="showSlideMobile('slideShowMobile', i)">Item {{i}}</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--KPIs-->
+<!--<div class="uk-section uk-section-default uk-margin-xlarge-top uk-margin-xlarge-bottom">-->
+  <!--<div class="uk-container uk-container-large">-->
+
+    <!--<h1>KPIs</h1>-->
+
+  <!--</div>-->
+<!--</div>-->
+
+<!--<pre *ngIf="form">{{form.getRawValue() | json}}</pre>-->

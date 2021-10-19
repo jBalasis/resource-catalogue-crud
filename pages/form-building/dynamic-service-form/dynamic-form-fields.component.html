@@ -1,0 +1,296 @@
+<div *ngIf="form" [formGroup]="form">
+
+  <div *ngIf="fieldData.field.form.visible">
+    <div class="uk-margin-large-bottom">
+      <label class="uk-form-label uk-text-right"
+             [attr.for]="fieldData.field.name">{{fieldData.field.label + (fieldData.field.form.mandatory ? ' (*)' : '')}}</label>
+      <div class="uk-form-description uk-margin-top uk-width-9-10">{{fieldData.field.form.description}}</div>
+      <div class="uk-form-controls uk-margin-medium-top">
+
+        <div *ngIf="fieldData.field.type === 'string' || fieldData.field.type === 'url' ||
+         fieldData.field.type === 'email' || fieldData.field.type === 'phone'">
+
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity" [formArrayName]="fieldData.field.name">
+            <div *ngFor="let input of fieldAsFormArray(fieldData.field.name).controls; let i=index" class="uk-margin-bottom">
+              <input [id]="fieldData.field.name" [formControlName]="i"
+                     class="uk-input uk-width-9-10 uk-animation-slide-top-small"
+                     [placeholder]="fieldData.field.form.placeholder ? fieldData.field.form.placeholder : ''"
+                     [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.field.name, i, this.editMode)}"
+                     (input)="updateBitSet(fieldData); unsavedChangesPrompt()">
+              <div *ngIf="projectName === 'OpenAIRE Catalogue' && fieldData.field.type === 'url' && this.editMode
+                        && this.isPortalAdmin && fieldAsFormArray(fieldData.field.name).controls[i].value" class="uk-icon">
+                &nbsp;&nbsp;<a href="{{this.form.get(fieldData.field.name).value}}" target="_blank">
+                <i class="fa fa-external-link"></i></a>
+              </div>
+              <a *ngIf="fieldAsFormArray(fieldData.field.name).length > 1"
+                 (click)="remove(fieldData.field.name, i); updateBitSet(fieldData); unsavedChangesPrompt()"
+                 class="remove-element uk-padding-small uk-animation-slide-top-small">
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div class="uk-width-9-10"><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+
+            <div class="uk-width-9-10 uk-text-center uk-margin-medium-top">
+              <a class="add-new-element" (click)="push(fieldData.field.name, fieldData.field.form.mandatory, fieldData.field.type)">
+                <i class="fa fa-plus" aria-hidden="true"></i>Add {{fieldData.field.label}}
+              </a>
+            </div>
+          </div>
+
+          <ng-template #noMultiplicity>
+            <input [formControlName]="fieldData.field.name" [id]="fieldData.field.name" class="uk-input uk-width-9-10"
+                   [placeholder]="fieldData.field.form.placeholder ? fieldData.field.form.placeholder : ''"
+                   (input)="updateBitSet(fieldData); unsavedChangesPrompt()"
+                   [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode) }">
+            <div *ngIf="projectName === 'OpenAIRE Catalogue' && fieldData.field.type === 'url' && this.editMode
+                        && this.isPortalAdmin && this.form.get(fieldData.field.name).value" class="uk-icon">&nbsp;&nbsp;
+              <a href="{{this.form.get(fieldData.field.name).value}}" target="_blank"><i class="fa fa-external-link"></i></a>
+            </div>
+            <div class="uk-width-9-10"><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+          </ng-template>
+
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'vocabulary'">
+
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity;" [formArrayName]="fieldData.field.name">
+            <div *ngFor="let input of fieldAsFormArray(fieldData.field.name).controls; let i=index" class="uk-margin-bottom">
+              <ng-select class="uk-width-9-10" [id]="fieldData.field.name" [formControlName]="i"
+                         [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.field.name, i, this.editMode)}"
+                         [items]="vocabularies[fieldData.field.form.vocabulary]"
+                         (change)="updateBitSet(fieldData); unsavedChangesPrompt()"
+                         bindLabel="name"
+                         bindValue="id"
+                         clearAllText="Clear">
+              </ng-select>
+              <a *ngIf="fieldAsFormArray(fieldData.field.name).length > 1"
+                 (click)="remove(fieldData.field.name, i); updateBitSet(fieldData); unsavedChangesPrompt()"
+                 class="remove-element uk-padding-small uk-animation-slide-top-small">
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+            <div class="uk-width-9-10 uk-text-center uk-margin-medium-top">
+              <a class="add-new-element" (click)="push(fieldData.field.name, fieldData.field.form.mandatory, fieldData.field.type)">
+                <i class="fa fa-plus" aria-hidden="true"></i>Add {{fieldData.field.label}}
+              </a>
+            </div>
+          </div>
+
+          <ng-template #noMultiplicity>
+            <ng-select class="uk-width-9-10" [id]="fieldData.field.name" [formControlName]="fieldData.field.name"
+                       (change)="updateBitSet(fieldData); unsavedChangesPrompt()"
+                       [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode)}"
+                       [items]="vocabularies[fieldData.field.form.vocabulary]"
+                       bindLabel="name"
+                       bindValue="id"
+                       clearAllText="Clear">
+            </ng-select>
+            <div><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'largeText'">
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity;" [formArrayName]="fieldData.field.name">
+            <!--To add multiplicity if needed-->
+          </div>
+          <ng-template #noMultiplicity>
+            <textarea [formControlName]="fieldData.field.name" [id]="fieldData.field.name" class="uk-textarea uk-width-9-10"
+                   [placeholder]="fieldData.field.form.placeholder ? fieldData.field.form.placeholder : ''"
+                   (input)="updateBitSet(fieldData); unsavedChangesPrompt()"
+                   [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode) }">
+            </textarea>
+            <div><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'composite'">
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity" [formArrayName]="fieldData.field.name">
+            <div *ngFor="let input of fieldAsFormArray(fieldData.field.name).controls; let i=index">
+              <div [formGroupName]="i" class="uk-margin-bottom formGroupElement uk-width-9-10 uk-display-inline-block">
+                <div *ngFor="let control of fieldData?.subFieldGroups; let j=index">
+                  <div class="uk-margin-bottom">
+                    <label class="uk-form-label uk-text-right" [attr.for]="fieldData.subFieldGroups[j].field.name + ' ' + i">
+                      {{fieldData.subFieldGroups[j].field.label + (fieldData.subFieldGroups[j].field.form.mandatory ? ' (*)' : '')}}
+                    </label>
+                    <div class="uk-form-description uk-margin-top uk-width-9-10">
+                      {{fieldData.subFieldGroups[j].field.form.description}}
+                    </div>
+                    <div *ngIf="fieldData.subFieldGroups[j].field.multiplicity && fieldData.subFieldGroups[j].field.type === 'string'" class="uk-form-controls uk-margin-medium-top" [formArrayName]="fieldData.subFieldGroups[j].field.name">
+                      <div *ngFor="let input of compositeFormArray(fieldData.subFieldGroups[j].field.parent, i, fieldData.subFieldGroups[j].field.name).controls; let k=index" class="uk-margin-bottom">
+                        <input [id]="fieldData.subFieldGroups[j].field.name" [formControlName]="k"
+                               class="uk-input uk-width-9-10 uk-animation-slide-top-small">
+
+                        <a *ngIf="compositeFormArray(fieldData.subFieldGroups[j].field.parent, i, fieldData.subFieldGroups[j].field.name).length > 1"
+                           (click)="removeFromArrayInsideComposite(fieldData.subFieldGroups[j].field.parent, i, fieldData.subFieldGroups[j].field.name, k); updateBitSet(fieldData); unsavedChangesPrompt()"
+                           class="remove-element uk-padding-small uk-animation-slide-top-small">
+                          <i class="fa fa-times" aria-hidden="true"></i>
+                        </a>
+                      </div>
+
+                      <div class="uk-width-9-10 uk-text-center uk-margin-medium-top">
+                        <a class="add-new-element" (click)="pushToArrayInsideComposite(fieldData.subFieldGroups[j].field.parent, i, fieldData.subFieldGroups[j].field.name, fieldData.field.form.mandatory)">
+                          <i class="fa fa-plus" aria-hidden="true"></i>Add {{fieldData.subFieldGroups[j].field.label}}
+                        </a>
+                      </div>
+
+                    </div>
+
+                    <div *ngIf="fieldData.subFieldGroups[j].field.type === 'vocabulary'" class="uk-form-controls uk-margin-medium-top">
+                      <ng-select class="uk-width-9-10" [id]="fieldData.subFieldGroups[j].field.name"
+                                 [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.subFieldGroups[j].field.parent, i, this.editMode, fieldData.subFieldGroups[j].field.name)}"
+                                 [items]="getCompositeVocabularyItems(fieldData, j, i)"
+                                 (change)="onCompositeChange(fieldData, j, i); updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt();"
+                                 bindLabel="name"
+                                 bindValue="id"
+                                 clearAllText="Clear"
+                                 [formControlName]="fieldData.subFieldGroups[j].field.name">
+                      </ng-select>
+                      <div class="uk-margin-small-top">
+                        <i><small>{{fieldData.subFieldGroups[j].field.form.suggestion}}</small></i>
+                      </div>
+                    </div>
+                    <div *ngIf="(fieldData.subFieldGroups[j].field.type === 'string' || fieldData.subFieldGroups[j].field.type === 'email'
+                                || fieldData.subFieldGroups[j].field.type === 'phone' || fieldData.subFieldGroups[j].field.type === 'url')
+                                && !fieldData.subFieldGroups[j].field.multiplicity">
+                      <input [id]="fieldData.subFieldGroups[j].field.name" class="uk-input uk-width-9-10"
+                             [formControlName]="fieldData.subFieldGroups[j].field.name"
+                             (input)="updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt()"
+                             [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.subFieldGroups[j].field.parent, i, this.editMode, fieldData.subFieldGroups[j].field.name)}">
+                    </div>
+                    <div *ngIf="fieldData.subFieldGroups[j].field.type === 'largeText'">
+                      <textarea [id]="fieldData.subFieldGroups[j].field.name" class="uk-textarea uk-width-9-10"
+                                [formControlName]="fieldData.subFieldGroups[j].field.name"
+                                (input)="updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt()"
+                                [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.subFieldGroups[j].field.parent, i, this.editMode, fieldData.subFieldGroups[j].field.name)}">
+                      </textarea>
+                    </div>
+                    <div *ngIf="fieldData.subFieldGroups[j].field.type === 'boolean'">
+                      <div *ngIf="fieldData.subFieldGroups[j].field.multiplicity; else noMultiplicity;" [formArrayName]="fieldData.subFieldGroups[j].field.name">
+                        <!--To add multiplicity if needed-->
+                      </div>
+                      <ng-template #noMultiplicity>
+                        <label>
+                          <input class="uk-radio" type="radio" [formControlName]="fieldData.subFieldGroups[j].field.name" [value]="true"
+                                 (input)="updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt()" [name]="fieldData.subFieldGroups[j].field.name"
+                                 [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.subFieldGroups[j].field.parent, i, this.editMode, fieldData.subFieldGroups[j].field.name) }"/>&nbsp;Yes&nbsp;
+                        </label>
+                        <label>
+                          <input class="uk-radio" type="radio" [formControlName]="fieldData.subFieldGroups[j].field.name" [value]="false"
+                                 (input)="updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt()" [name]="fieldData.subFieldGroups[j].field.name"
+                                 [ngClass]="{'uk-form-danger': checkFormArrayValidity(fieldData.subFieldGroups[j].field.parent, i, this.editMode, fieldData.subFieldGroups[j].field.name) }"/>&nbsp;&nbsp;No&nbsp;
+                        </label>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <a *ngIf="fieldAsFormArray(fieldData.field.name).length > 1"
+                 class="remove-element uk-padding-small uk-display-inline-block"
+                 (click)="remove(fieldData.field.name, i); updateBitSetOfComposite(fieldData, i); unsavedChangesPrompt();">
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div class="uk-width-9-10 uk-text-center uk-margin-top">
+              <a class="add-new-element" (click)="pushComposite(fieldData.field.name, fieldData.subFieldGroups)">
+                <i class="fa fa-plus" aria-hidden="true"></i> Add {{fieldData.field.label}}
+              </a>
+            </div>
+          </div>
+
+          <ng-template #noMultiplicity>
+            <div [formGroupName]="fieldData.field.name"
+                 class="uk-margin-bottom formGroupElement uk-width-9-10 uk-display-inline-block">
+              <div *ngFor="let control of fieldData?.subFieldGroups; let j=index">
+                <div class="uk-margin-bottom">
+                  <label class="uk-form-label uk-text-right" [attr.for]="fieldData.subFieldGroups[j].field.name">
+                    {{fieldData.subFieldGroups[j].field.label + (fieldData.subFieldGroups[j].field.form.mandatory ? ' (*)' : '')}}
+                  </label>
+                  <div class="uk-form-description uk-margin-top uk-width-9-10">
+                    {{fieldData.subFieldGroups[j].field.form.description}}
+                  </div>
+                  <div *ngIf="fieldData.subFieldGroups[j].field.type === 'vocabulary'"
+                       class="uk-form-controls uk-margin-medium-top">
+                    <ng-select class="uk-width-9-10" [id]="fieldData.subFieldGroups[j].field.name"
+                               [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.subFieldGroups[j].field.parent + '.' + fieldData.subFieldGroups[j].field.name, this.editMode)}"
+                               [items]="getCompositeVocabularyItems(fieldData, j)"
+                               (change)="unsavedChangesPrompt(); onCompositeChange(fieldData, j); updateBitSetOfComposite(fieldData, j)"
+                               bindLabel="name"
+                               bindValue="id"
+                               clearAllText="Clear"
+                               [formControlName]="fieldData.subFieldGroups[j].field.name">
+                    </ng-select>
+                    <div class="uk-margin-small-top">
+                      <i><small>{{fieldData.subFieldGroups[j].field.form.suggestion}}</small></i>
+                    </div>
+                  </div>
+
+                  <div *ngIf="fieldData.subFieldGroups[j].field.type === 'string' || fieldData.subFieldGroups[j].field.type === 'email' || fieldData.subFieldGroups[j].field.type === 'phone'">
+                    <input [id]="fieldData.subFieldGroups[j].field.name" class="uk-input uk-width-9-10"
+                           [formControlName]="fieldData.subFieldGroups[j].field.name"
+                           (input)="updateBitSetOfComposite(fieldData, j); unsavedChangesPrompt()"
+                           [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.subFieldGroups[j].field.parent + '.' + fieldData.subFieldGroups[j].field.name, this.editMode)}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'richText'">
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity" [formArrayName]="fieldData.field.name">
+            <!--To add multiplicity if needed-->
+          </div>
+
+          <ng-template #noMultiplicity>
+            <div class="uk-margin-medium-top uk-width-9-10">
+            <md-editor [id]="fieldData.field.name"
+                       [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode)}"
+                       [height]="'250px'"
+                       [mode]="'editor'"
+                       [options]="{markedjsOpt: { breaks: true }, showPreviewPanel: true, resizable: true, enablePreviewContentClick: true}"
+                       (ngModelChange)="updateBitSet(fieldData)"
+                       [formControlName]="fieldData.field.name">
+            </md-editor>
+            </div>
+            <div><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'date'">
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity" [formArrayName]="fieldData.field.name">
+            <!--To add multiplicity if needed-->
+          </div>
+
+          <ng-template #noMultiplicity>
+            <input [formControlName]="fieldData.field.name" [id]="fieldData.field.name" class="uk-input uk-width-9-10"
+                   [placeholder]="fieldData.field.form.placeholder ? fieldData.field.form.placeholder : ''"
+                   (input)="updateBitSet(fieldData); unsavedChangesPrompt()" [type]="fieldData.field.type"
+                   [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode) }">
+            <div><i><small>{{fieldData.field.form.suggestion}}</small></i></div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="fieldData.field.type === 'boolean'">
+          <div *ngIf="fieldData.field.multiplicity; else noMultiplicity;" [formArrayName]="fieldData.field.name">
+            <!--To add multiplicity if needed-->
+          </div>
+          <ng-template #noMultiplicity>
+            <label>
+              <input class="uk-radio" type="radio" [formControlName]="fieldData.field.name" [value]="true"
+                     (input)="updateBitSet(fieldData); unsavedChangesPrompt()" [name]="fieldData.field.name"
+                     [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode) }"/>&nbsp;Yes&nbsp;
+            </label>
+            <label>
+              <input class="uk-radio" type="radio"  [formControlName]="fieldData.field.name" [value]="false"
+                     (input)="updateBitSet(fieldData); unsavedChangesPrompt()" [name]="fieldData.field.name"
+                     [ngClass]="{'uk-form-danger': checkFormValidity(fieldData.field.name, this.editMode) }"/>&nbsp;No&nbsp;
+            </label>
+          </ng-template>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
